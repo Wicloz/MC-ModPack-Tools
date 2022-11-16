@@ -76,19 +76,17 @@ if __name__ == '__main__':
 
     # start building mod pack
     with TemporaryDirectory() as temp:
-        temp = Path(temp)
+        build = Path(temp)
 
         # write manifest file
-        with open(temp / 'manifest.json', 'w') as fp:
+        with open(build / 'manifest.json', 'w') as fp:
             json.dump(manifest, fp)
 
         # write changelog file
-        with open(temp / 'modlist.html', 'w') as fp_w:
-            with open('modlist.html', 'r') as fp_r:
-                copyfileobj(fp_r, fp_w)
+        copy('modlist.html', build / 'modlist.html')
 
         # write modlist file
-        with open(temp / 'changelog.txt', 'w') as fp:
+        with open(build / 'changelog.txt', 'w') as fp:
             fp.write(changelog)
 
         # copy files manged by Git
@@ -100,41 +98,44 @@ if __name__ == '__main__':
                 process += list(item)
 
             elif item.type == 'blob' and item.name not in special:
-                target = temp / 'overrides' / item.path
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with open(target, 'wb') as fp:
+                destination = build / 'overrides' / item.path
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                with open(destination, 'wb') as fp:
                     copyfileobj(item.data_stream, fp)
 
         # create client ZIP from the temp folder
         with ZipFile(client_zip, 'w') as fp:
-            for file in temp.glob('**/*'):
-                fp.write(file, file.relative_to(temp))
+            for file in build.glob('**/*'):
+                fp.write(file, file.relative_to(build))
+
+        # start building server in override folder
+        build = build / 'overrides'
 
         # copy mods to server folder
-        if not (temp / 'overrides' / 'mods').exists():
-            (temp / 'overrides' / 'mods').mkdir()
+        if not (build / 'mods').exists():
+            (build / 'mods').mkdir()
         for file in managed_mods:
-            copy(Path('mods') / file, temp / 'overrides' / 'mods' / file)
+            copy(Path('mods') / file, build / 'mods' / file)
 
         # download Forge installer JAR
         forge_version = instance['baseModLoader']['minecraftVersion'] + '-' + instance['baseModLoader']['forgeVersion']
-        with open(temp / 'overrides' / f'forge-{forge_version}-installer.jar', 'wb') as fp:
+        with open(build / f'forge-{forge_version}-installer.jar', 'wb') as fp:
             fp.write(requests.get(
                 f'https://maven.minecraftforge.net/net/minecraftforge/forge/{forge_version}/forge-{forge_version}-installer.jar'
             ).content)
 
         # write server install scripts
-        with open(temp / 'overrides' / 'install.sh', 'w', newline='\n') as fp:
+        with open(build / 'install.sh', 'w', newline='\n') as fp:
             fp.write('#!/bin/sh' + '\n')
             fp.write(f'java -jar "forge-{forge_version}-installer.jar" --installServer' + '\n')
-        with open(temp / 'overrides' / 'install.bat', 'w', newline='\r\n') as fp:
+        with open(build / 'install.bat', 'w', newline='\r\n') as fp:
             fp.write('@ECHO OFF' + '\r\n')
             fp.write(f'java -jar "forge-{forge_version}-installer.jar" --installServer' + '\r\n')
 
         # create server ZIP from the override folder
         with ZipFile(server_zip, 'w') as fp:
-            for file in (temp / 'overrides').glob('**/*'):
-                fp.write(file, file.relative_to(temp / 'overrides'))
+            for file in build.glob('**/*'):
+                fp.write(file, file.relative_to(build))
 
     # determine game ids for version
     game_ids = []
