@@ -1,0 +1,16 @@
+.grid-row {
+  display: flex;
+  gap: 20px;
+  padding-left: 20px;
+  overflow-x: scroll;
+  align-items: flex-start;
+
+  * {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+}
+
+.addon {
+  min-height: 62px !important;
+}

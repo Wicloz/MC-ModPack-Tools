@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>{{ stylesheet }}</style>
+    <title>{{ title }} Modlist</title>
+  </head>
+  <body>
+    {% for row in page %}
+    <div class="grid-row">
+
+      {% for block in row %}
+      <ul class="collection with-header">
+        <li class="collection-header"><h5>{{ block.header }}</h5></li>
+        {% for addon in block.addons %}
+        <a class="collection-item avatar addon {% if addon.obsolete %}purple{% endif %} {% if addon.disabled %}orange{% endif %} {% if addon.missing %}red{% endif %}"
+           target="_blank" href="https://minecraft.curseforge.com/projects/{{ addon.pid }}">
+          <img src="{{ addon.thumbnail }}" alt="thumbnail" class="circle">
+          <span class="title">{{ addon.name }}</span>
+          <p>{{ addon.file }}</p>
+        </a>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+
+    </div>
+    {% endfor %}
+  </body>
+</html>
