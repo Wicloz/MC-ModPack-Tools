@@ -131,12 +131,12 @@ if __name__ == '__main__':
             fp.write('@ECHO OFF' + '\r\n')
             fp.write(f'java -jar "forge-{forge_version}-installer.jar" --installServer' + '\r\n')
 
-        # create server ZIP from the overrides folder
+        # create server ZIP from the override folder
         with ZipFile(server_zip, 'w') as fp:
             for file in (temp / 'overrides').glob('**/*'):
                 fp.write(file, file.relative_to(temp / 'overrides'))
 
-    # determine game id from version
+    # determine game ids for version
     game_ids = []
     for game in requests.get('https://minecraft.curseforge.com/api/game/versions', headers=headers).json():
         if game['name'] == instance['gameVersion'] and game['gameVersionTypeID'] == 73407:
