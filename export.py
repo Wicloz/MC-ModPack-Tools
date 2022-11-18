@@ -177,7 +177,6 @@ if __name__ == '__main__':
             'changelog': changelog,
             'displayName': server_pack_name,
             'parentFileID': upload_id,
-            'additionalFileInfo': 'serverPack',
             'releaseType': 'beta',
         })},
         files={'file': open(server_zip, 'rb')},
