@@ -166,7 +166,7 @@ if __name__ == '__main__':
         exit(1)
     upload_id = resp.json()['id']
     webbrowser.open(
-        'https://www.curseforge.com/minecraft/modpacks/' + project['slug'] + '/files/' + str(upload_id)
+        f'https://www.curseforge.com/project/{project_id}/files/{upload_id}/edit'
     )
 
     # upload server pack to CurseForge
@@ -181,6 +181,12 @@ if __name__ == '__main__':
         })},
         files={'file': open(server_zip, 'rb')},
     )
+
+    # show upload results
     if not resp.ok:
         print(resp.text)
         exit(1)
+    upload_id = resp.json()['id']
+    webbrowser.open(
+        f'https://www.curseforge.com/project/{project_id}/files/{upload_id}/edit'
+    )
