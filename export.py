@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     # prepare repository objects
     repo = Repo()
-    special = {'.gitignore', 'modlist.yml', 'modlist.html'}
+    special = {'.gitignore', 'modlist.yml', 'modlist.html', 'minecraftinstance.json'}
 
     # prepare ZIP outputs
     if not versions.exists():
