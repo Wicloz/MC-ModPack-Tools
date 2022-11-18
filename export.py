@@ -26,7 +26,6 @@ if __name__ == '__main__':
     project = requests.get('https://api.curseforge.com/v1/mods/' + project_id, headers=headers).json()['data']
     with open('minecraftinstance.json', 'r') as fp:
         instance = json.load(fp)
-    print(json.dumps(instance, indent=2))
 
     # request version and changelog from user
     version = input('Enter New Version: ')
