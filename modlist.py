@@ -6,13 +6,15 @@ from jinja2 import Template
 import re
 from urllib.parse import quote
 from subprocess import run, PIPE
-from htmlmin import minify
 
 CACHE = Path(__file__).parent / 'resources' / 'cursecache.json'
 HTML = Path(__file__).parent / 'resources' / 'page.html'
 SCSS = Path(__file__).parent / 'resources' / 'page.scss'
 
 if __name__ == '__main__':
+    with open('project.yml', 'r') as fp:
+        project = YAML(typ='safe').load(fp)
+
     with open('modlist.yml', 'r') as fp:
         definitions = YAML(typ='safe').load(fp)
         if not definitions:
@@ -87,7 +89,7 @@ if __name__ == '__main__':
         tm = Template(fp.read())
 
     with open('modlist.html', 'w') as fp:
-        fp.write(minify(tm.render(page=page, title=Path().resolve().name, stylesheet=stylesheet)))
+        fp.write(tm.render(page=page, title=project['name'], stylesheet=stylesheet))
 
     print('Generated mod list HTML at:')
     print('file:///' + quote(str(Path().resolve() / 'modlist.html').replace('\\', '/'), ':/'))
