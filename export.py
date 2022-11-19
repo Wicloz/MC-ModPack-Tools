@@ -13,17 +13,15 @@ if __name__ == '__main__':
     # load export settings
     with open('export.yml', 'r') as fp:
         settings = YAML(typ='safe').load(fp)
-    project_id = str(settings['project'])
     versions = Path(settings['output'])
+    headers = {'X-Api-Token': settings['api-token']}
 
-    # construct API headers
-    headers = {
-        'X-Api-Token': settings['api-token'],
-        'X-Api-Key': settings['api-key'],
-    }
+    # load project settings
+    with open('project.yml', 'r') as fp:
+        project = YAML(typ='safe').load(fp)
+    project_id = int(project['id'])
 
-    # load project and instance data
-    project = requests.get('https://api.curseforge.com/v1/mods/' + project_id, headers=headers).json()['data']
+    # load instance settings
     with open('minecraftinstance.json', 'r') as fp:
         instance = json.load(fp)
 
@@ -48,7 +46,7 @@ if __name__ == '__main__':
         'manifestVersion': 1,
         'name': project['name'],
         'version': version,
-        'author': project['authors'][0]['name'],
+        'author': project['authors'],
         'files': [],
         'overrides': 'overrides',
     }
@@ -65,7 +63,7 @@ if __name__ == '__main__':
 
     # prepare repository objects
     repo = Repo()
-    special = {'.gitignore', 'modlist.yml', 'modlist.html', 'minecraftinstance.json'}
+    special = {'.gitignore', 'modlist.yml', 'modlist.html', 'minecraftinstance.json', 'project.yml'}
 
     # prepare ZIP outputs
     if not versions.exists():
