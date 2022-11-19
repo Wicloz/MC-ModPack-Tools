@@ -188,3 +188,7 @@ if __name__ == '__main__':
     webbrowser.open(
         f'https://www.curseforge.com/project/{project_id}/files/{upload_id}/edit'
     )
+
+    # copy server ZIP to deploy location when set
+    if 'latest' in settings:
+        copy(server_zip, settings['latest'])
