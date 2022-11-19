@@ -5,7 +5,7 @@ import webbrowser
 from jinja2 import Template
 import re
 from urllib.parse import quote
-from subprocess import run, PIPE
+import sass
 
 CACHE = Path(__file__).parent / 'resources' / 'cursecache.json'
 HTML = Path(__file__).parent / 'resources' / 'page.html'
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         page.append(row)
 
-    stylesheet = run(('sass.bat', '--style=compressed', SCSS), stdout=PIPE).stdout.decode('UTF8')
+    stylesheet = sass.compile(filename=str(SCSS), output_style='compressed')
     with open(HTML, 'r') as fp:
         tm = Template(fp.read())
 
