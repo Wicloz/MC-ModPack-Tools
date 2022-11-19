@@ -6,6 +6,7 @@ from jinja2 import Template
 import re
 from urllib.parse import quote
 import sass
+from bs4 import BeautifulSoup
 
 CACHE = Path(__file__).parent / 'resources' / 'cursecache.json'
 HTML = Path(__file__).parent / 'resources' / 'page.html'
@@ -88,8 +89,10 @@ if __name__ == '__main__':
     with open(HTML, 'r') as fp:
         tm = Template(fp.read())
 
+    render = tm.render(page=page, title=project['name'], stylesheet=stylesheet)
+    cleaned = BeautifulSoup(render, 'lxml').prettify()
     with open('modlist.html', 'w') as fp:
-        fp.write(tm.render(page=page, title=project['name'], stylesheet=stylesheet))
+        fp.write(cleaned)
 
     print('Generated mod list HTML at:')
     print('file:///' + quote(str(Path().resolve() / 'modlist.html').replace('\\', '/'), ':/'))
