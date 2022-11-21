@@ -192,3 +192,7 @@ if __name__ == '__main__':
     # copy server ZIP to deploy location when set
     if 'latest' in settings:
         copy(server_zip, settings['latest'])
+
+    # tag HEAD with deployed version
+    tag = repo.create_tag(version)
+    repo.remotes.origin.push(tag)
