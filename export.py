@@ -9,6 +9,8 @@ from ruamel.yaml import YAML
 import webbrowser
 from slugify import slugify
 
+UNSAFE = Path(__file__).parent / 'resources' / 'unsafe.txt'
+
 if __name__ == '__main__':
     # load export settings
     with open('export.yml', 'r') as fp:
@@ -24,6 +26,12 @@ if __name__ == '__main__':
     # load instance settings
     with open('minecraftinstance.json', 'r') as fp:
         instance = json.load(fp)
+
+    # load client-only mod list
+    unsafe = []
+    with open(UNSAFE, 'r') as fp:
+        for line in fp:
+            unsafe.append(int(line.strip()))
 
     # request version and changelog from user
     version = input('Enter New Version: ')
@@ -52,14 +60,15 @@ if __name__ == '__main__':
     }
 
     # add managed mods to manifest
-    managed_mods = []
+    server_mods = []
     for addon in instance['installedAddons']:
         manifest['files'].append({
             'projectID': addon['addonID'],
             'fileID': addon['installedFile']['id'],
             'required': not addon['installedFile']['FileNameOnDisk'].endswith('.disabled'),
         })
-        managed_mods.append(addon['installedFile']['FileNameOnDisk'])
+        if addon['addonID'] not in unsafe:
+            server_mods.append(addon['installedFile']['FileNameOnDisk'])
 
     # prepare repository objects
     repo = Repo()
@@ -111,7 +120,7 @@ if __name__ == '__main__':
         # copy mods to server folder
         if not (build / 'mods').exists():
             (build / 'mods').mkdir()
-        for file in managed_mods:
+        for file in server_mods:
             copy(Path('mods') / file, build / 'mods' / file)
 
         # download Forge installer JAR
