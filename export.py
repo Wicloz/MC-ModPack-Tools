@@ -65,10 +65,10 @@ if __name__ == '__main__':
         manifest['files'].append({
             'projectID': addon['addonID'],
             'fileID': addon['installedFile']['id'],
-            'required': not addon['installedFile']['FileNameOnDisk'].endswith('.disabled'),
+            'required': not addon['installedFile']['fileNameOnDisk'].endswith('.disabled'),
         })
         if addon['addonID'] not in unsafe:
-            server_mods.append(addon['installedFile']['FileNameOnDisk'])
+            server_mods.append(addon['installedFile']['fileNameOnDisk'])
 
     # prepare repository objects
     repo = Repo()

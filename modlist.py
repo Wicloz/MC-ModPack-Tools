@@ -30,7 +30,7 @@ if __name__ == '__main__':
         for pid in category['addons']:
             for addon in instance['installedAddons']:
                 if addon['addonID'] == pid:
-                    files[pid] = addon['installedFile']['FileNameOnDisk']
+                    files[pid] = addon['installedFile']['fileNameOnDisk']
                     dependencies.update(item['addonId'] for item in addon['installedFile']['dependencies'])
                     break
             else:
