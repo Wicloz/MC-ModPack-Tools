@@ -78,7 +78,8 @@ if __name__ == '__main__':
                         'thumbnail': cache[pid]['thumbnail'],
                         'missing': files[pid] == '',
                         'disabled': files[pid].endswith('.disabled'),
-                        'obsolete': category['category'] == 'Libraries' and pid not in dependencies,
+                        'obsolete': category.get('libraries', False) and pid not in category.get('required', [])
+                                    and pid not in dependencies,
                         'file': files[pid],
                     } for pid in category['addons']],
                 })
